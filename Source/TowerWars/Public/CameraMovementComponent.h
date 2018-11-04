@@ -17,16 +17,19 @@ public:
 	UCameraMovementComponent();
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float MaxMovementMultiplier;
+	float MaxMovementMultiplier = 2.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float ZoomSensitivity;
+	float ZoomSensitivity = 50.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float MinArmDistance;
+	float MinArmDistance = 500.f;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float MaxArmDistance;
+	float MaxArmDistance = 3000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float MouseMovementSpeed = 5.f;
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	void Initialise(USpringArmComponent* SpringArm);
@@ -42,6 +45,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
 	void Zoom(bool zoomIn);
+
+	UFUNCTION(BlueprintCallable, Category = Camera)
+	void ScreenEdgeMovement(FVector2D MousePosition, FVector2D ScreenSize);
 
 private:
 	USpringArmComponent* SpringArm;

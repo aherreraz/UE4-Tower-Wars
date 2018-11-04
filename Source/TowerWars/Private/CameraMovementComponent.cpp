@@ -26,12 +26,8 @@ void UCameraMovementComponent::MovementX(float axisValue)
 	if (!SpringArm)
 		return;
 
-	FVector MovementVector = FVector(axisValue * GetMovementSensitivity() * CurrentMovementMultiplier, 0.f, 0.f);
-	FVector CameraLocation = GetOwner()->GetActorLocation();
-	FVector NewCameraLocation = MovementVector + CameraLocation;
-	FString s = NewCameraLocation.ToString();
-	//UE_LOG(LogTemp, Warning, TEXT("MovementVector = %s"), *MovementVector.ToString());
-	GetOwner()->SetActorLocation(NewCameraLocation, true);
+	float DeltaMovement = axisValue * GetMovementSensitivity() * CurrentMovementMultiplier;
+	GetOwner()->AddActorLocalOffset(DeltaMovement * FVector::ForwardVector, true);
 }
 
 void UCameraMovementComponent::MovementY(float axisValue)
@@ -39,12 +35,8 @@ void UCameraMovementComponent::MovementY(float axisValue)
 	if (!SpringArm)
 		return;
 
-	FVector MovementVector = FVector(0.f, axisValue * GetMovementSensitivity() * CurrentMovementMultiplier, 0.f);
-	FVector CameraLocation = GetOwner()->GetActorLocation();
-	FVector NewCameraLocation = MovementVector + CameraLocation;
-	FString s = NewCameraLocation.ToString();
-	//UE_LOG(LogTemp, Warning, TEXT("MovementVector = %s"), *MovementVector.ToString());
-	GetOwner()->SetActorLocation(NewCameraLocation, true);
+	float DeltaMovement = axisValue * GetMovementSensitivity() * CurrentMovementMultiplier;
+	GetOwner()->AddActorLocalOffset(DeltaMovement * FVector::RightVector, true);
 }
 
 void UCameraMovementComponent::ToggleMovementMultiplier(bool activateMultiplier)
@@ -65,4 +57,24 @@ void UCameraMovementComponent::Zoom(bool zoomIn)
 		zoomDistance *= -1;
 
 	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + zoomDistance, MinArmDistance, MaxArmDistance);
+}
+
+void UCameraMovementComponent::ScreenEdgeMovement(FVector2D MousePosition, FVector2D ScreenSize)
+{
+	// Actor x = -Screen y
+	// Actor y = Screen x
+
+	FVector2D ScreenRatio = MousePosition / ScreenSize;
+	FVector DeltaMovement(0.f, 0.f, 0.f);
+	if (ScreenRatio.Y <= 0.025f)
+		DeltaMovement.X = MouseMovementSpeed;
+	else if (ScreenRatio.Y >= 0.975f)
+		DeltaMovement.X = -MouseMovementSpeed;
+
+	if (ScreenRatio.X <= 0.025f)
+		DeltaMovement.Y = -MouseMovementSpeed;
+	else if (ScreenRatio.X >= 0.975f)
+		DeltaMovement.Y = MouseMovementSpeed;
+
+	GetOwner()->AddActorLocalOffset(DeltaMovement, true);
 }
