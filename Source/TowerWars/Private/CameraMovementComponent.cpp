@@ -26,7 +26,7 @@ void UCameraMovementComponent::MovementX(float axisValue)
 	if (!SpringArm)
 		return;
 
-	FVector MovementVector = FVector(axisValue * GetMovementSensitivity() * MovementMultiplier, 0.f, 0.f);
+	FVector MovementVector = FVector(axisValue * GetMovementSensitivity() * CurrentMovementMultiplier, 0.f, 0.f);
 	FVector CameraLocation = GetOwner()->GetActorLocation();
 	FVector NewCameraLocation = MovementVector + CameraLocation;
 	FString s = NewCameraLocation.ToString();
@@ -39,7 +39,7 @@ void UCameraMovementComponent::MovementY(float axisValue)
 	if (!SpringArm)
 		return;
 
-	FVector MovementVector = FVector(0.f, axisValue * GetMovementSensitivity() * MovementMultiplier, 0.f);
+	FVector MovementVector = FVector(0.f, axisValue * GetMovementSensitivity() * CurrentMovementMultiplier, 0.f);
 	FVector CameraLocation = GetOwner()->GetActorLocation();
 	FVector NewCameraLocation = MovementVector + CameraLocation;
 	FString s = NewCameraLocation.ToString();
@@ -47,7 +47,22 @@ void UCameraMovementComponent::MovementY(float axisValue)
 	GetOwner()->SetActorLocation(NewCameraLocation, true);
 }
 
-void UCameraMovementComponent::SetMovementMultiplier(float movementMultiplier)
+void UCameraMovementComponent::ToggleMovementMultiplier(bool activateMultiplier)
 {
-	MovementMultiplier = movementMultiplier;
+	if (activateMultiplier)
+		CurrentMovementMultiplier = MaxMovementMultiplier;
+	else
+		CurrentMovementMultiplier = 1.f;
+}
+
+void UCameraMovementComponent::Zoom(bool zoomIn)
+{
+	if (!SpringArm)
+		return;
+
+	float zoomDistance = ZoomSensitivity;
+	if (zoomIn)
+		zoomDistance *= -1;
+
+	SpringArm->TargetArmLength = FMath::Clamp(SpringArm->TargetArmLength + zoomDistance, MinArmDistance, MaxArmDistance);
 }

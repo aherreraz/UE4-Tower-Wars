@@ -16,7 +16,19 @@ class TOWERWARS_API UCameraMovementComponent : public UActorComponent
 public:
 	UCameraMovementComponent();
 
-	UFUNCTION(BlueprintCallable, Category = Setup)
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float MaxMovementMultiplier;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float ZoomSensitivity;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float MinArmDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = Camera)
+	float MaxArmDistance;
+
+	UFUNCTION(BlueprintCallable, Category = Camera)
 	void Initialise(USpringArmComponent* SpringArm);
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
@@ -26,10 +38,13 @@ public:
 	void MovementY(float axisValue);
 
 	UFUNCTION(BlueprintCallable, Category = Camera)
-	void SetMovementMultiplier(float movementMultiplier);
+	void ToggleMovementMultiplier(bool activateMultiplier);
+
+	UFUNCTION(BlueprintCallable, Category = Camera)
+	void Zoom(bool zoomIn);
 
 private:
 	USpringArmComponent* SpringArm;
-	float MovementMultiplier = 1.f;
+	float CurrentMovementMultiplier = 1.f;
 	float GetMovementSensitivity();
 };
