@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "TowerWars.h"
 #include "GameFramework/PlayerController.h"
 #include "Public/CameraMovementComponent.h"
 #include "TowerWarsPlayerController.generated.h"
@@ -19,8 +19,21 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = Camera)
 	UCameraMovementComponent* MovementComponent = nullptr;
 
+	UPROPERTY(BlueprintReadOnly, Category = Selection)
+	TWeakObjectPtr<AActor> SelectedActor;
+
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable, Category = Selection)
+	AActor* GetSelectableTarget();
+
+	UFUNCTION(BlueprintCallable, Category = Selection)
+	void SetSelectedActor(AActor* NewSelectedActor);
+
+	
 	
 private:
 	UCameraMovementComponent* GetCameraMovementComponent();
+
+	
 };

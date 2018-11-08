@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "TowerWars.h"
 #include "Components/ActorComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "CameraMovementComponent.generated.h"

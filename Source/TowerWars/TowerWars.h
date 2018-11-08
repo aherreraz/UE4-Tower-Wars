@@ -3,4 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TWEnums.h"
 
+#define TRACING_SELECTION ECC_GameTraceChannel1
