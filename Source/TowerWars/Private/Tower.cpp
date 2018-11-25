@@ -20,7 +20,7 @@ ESelectedType ATower::GetType_Implementation() const
 	return ESelectedType::Tower;
 }
 
-int32 ATower::IssueCommand_Implementation(ECommandType CommandType, int32 Value, int32 Gold)
+int32 ATower::IssueCommand_Implementation(ECommandType CommandType, int32 Value, int32 Gold, int32 Wave)
 {
 	if (CommandType == ECommandType::Upgrade)
 	{
@@ -37,12 +37,32 @@ int32 ATower::IssueCommand_Implementation(ECommandType CommandType, int32 Value,
 		// Upgrade
 		ATower* NewTower = nullptr;
 		ReplaceTower(Upgrades[Value], &NewTower);
+		NewTower->WaveBuilt = Wave;
+		NewTower->TotalValue = TotalValue + NewTower->GoldCost;
+		NewTower->DevaluedValue = (Wave == WaveBuilt) ? DevaluedValue : TotalValue;
 		return UpgradeCost;
 	}
-
-	// TODO: Implement selling
+	// TODO: Implement change attack
 
 	return 0;
+}
+
+int32 ATower::IssueSellCommand_Implementation(int32 Gold, int32 Wave, int32 DevaluationPercent)
+{
+	// Must set an empty building
+	if (!EmptyBuilding)
+		return 0;
+
+	// Cant sell an empty building
+	if (TotalValue == 0)
+		return 0;
+
+	ATower* NewTower = nullptr;
+	ReplaceTower(EmptyBuilding, &NewTower);
+	if (WaveBuilt == Wave)
+		return (DevaluedValue * DevaluationPercent / 100) - TotalValue;
+	
+	return TotalValue * (DevaluationPercent - 100) / 100;
 }
 
 void ATower::ReplaceTower(TSubclassOf<ATower> NewTowerClass, ATower ** OutNewTower)

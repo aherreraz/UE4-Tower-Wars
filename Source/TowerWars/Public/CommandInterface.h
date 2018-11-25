@@ -26,5 +26,9 @@ public:
 
 	/** Returns gold spent */
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = Command)
-	int32 IssueCommand(ECommandType CommandType, int32 Value, int32 Gold);   
+	int32 IssueCommand(ECommandType CommandType, int32 Value, int32 Gold, int32 Wave);
+
+	/** Returns gold spent */
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable, Category = Command)
+	int32 IssueSellCommand(int32 Gold, int32 Wave, int32 DevaluationPercent);
 };

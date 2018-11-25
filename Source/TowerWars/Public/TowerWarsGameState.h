@@ -17,10 +17,13 @@ class TOWERWARS_API ATowerWarsGameState : public AGameStateBase
 
 public:
 	UPROPERTY(BlueprintReadOnly, Category = GamePhases)
-		EGamePhase GamePhase;
+	EGamePhase GamePhase;
 
 	UPROPERTY(BlueprintReadOnly, Category = GamePhases)
-		int32 WaveNumber;
+	int32 WaveNumber;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	int32 DevaluationPercent = 30;
 
 private:
 	FTimerHandle GamePhaseTimer;

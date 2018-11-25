@@ -56,9 +56,9 @@ void ATowerWarsPlayerController::IssueCommand(ECommandType CommandType, int32 Va
 		{
 			int32 GoldCost;
 			if (CommandType == ECommandType::AnyButSell)
-				GoldCost = ICommandInterface::Execute_IssueCommand(SelectedActor.Get(), ECommandType::Upgrade, Value, PlayerState->Gold);
+				GoldCost = ICommandInterface::Execute_IssueCommand(SelectedActor.Get(), ECommandType::Upgrade, Value, PlayerState->Gold, GameState->WaveNumber);
 			else if (CommandType == ECommandType::Sell)
-				GoldCost = ICommandInterface::Execute_IssueCommand(SelectedActor.Get(), ECommandType::Sell, Value, PlayerState->Gold);
+				GoldCost = ICommandInterface::Execute_IssueSellCommand(SelectedActor.Get(), PlayerState->Gold, GameState->WaveNumber, GameState->DevaluationPercent);
 			PlayerState->IncrementGold(-GoldCost);
 		}
 	}

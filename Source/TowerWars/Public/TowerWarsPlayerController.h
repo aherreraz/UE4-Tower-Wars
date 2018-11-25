@@ -32,7 +32,7 @@ protected:
 	void SetSelectedActor(AActor* NewSelectedActor);
 
 	UFUNCTION(BlueprintCallable, Category = Command)
-	void IssueCommand(ECommandType CommandType, int32 Value);
+	void IssueCommand(ECommandType CommandType, int32 Value = 0);
 	
 private:
 	UCameraMovementComponent* GetCameraMovementComponent();
