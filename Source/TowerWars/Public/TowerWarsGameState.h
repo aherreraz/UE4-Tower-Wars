@@ -40,6 +40,15 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GamePhases)
 	int32 PlanningTime = 30;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	int32 InitialGold = 50;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	int32 InitialIncome = 5;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	int32 InitialCastleHealth = 50;
+
 	UFUNCTION(BlueprintCallable, Category = GamePhases)
 	void SetGamePhase(EGamePhase NewGamePhase);
 

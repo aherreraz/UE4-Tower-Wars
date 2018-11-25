@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TowerWarsGameState.h"
+#include "TowerWarsPlayerState.h"
 #include "TimerManager.h"
 
 void ATowerWarsGameState::BeginPlay()
@@ -10,6 +11,9 @@ void ATowerWarsGameState::BeginPlay()
 	// Set initial game state
 	WaveNumber = 1;
 	SetGamePhase(EGamePhase::Building);
+	
+	for (APlayerState* playerState : PlayerArray)
+		Cast<ATowerWarsPlayerState>(playerState)->Initialize(InitialGold, InitialIncome, InitialCastleHealth);
 
 	// Set timer for next phase
 	FTimerDelegate TimerDel;
@@ -49,4 +53,8 @@ void ATowerWarsGameState::IncreaseWave()
 	// TODO: Generate wave
 	WaveNumber++;
 	SetGamePhase(EGamePhase::Building);
+
+	// Pay income to players
+	for (APlayerState* playerState : PlayerArray)
+		Cast<ATowerWarsPlayerState>(playerState)->PayIncome();
 }
