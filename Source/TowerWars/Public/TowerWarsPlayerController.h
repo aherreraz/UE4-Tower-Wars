@@ -34,6 +34,4 @@ protected:
 	
 private:
 	UCameraMovementComponent* GetCameraMovementComponent();
-
-	
 };

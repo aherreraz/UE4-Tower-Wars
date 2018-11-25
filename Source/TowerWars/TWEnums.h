@@ -18,3 +18,12 @@ enum class EGamePhase : uint8
 	Planning,
 	Fighting
 };
+
+UENUM(BlueprintType)
+enum class ECommandType : uint8
+{
+	Upgrade,
+	Sell,
+	Deploy,
+	ChangeAttack
+};

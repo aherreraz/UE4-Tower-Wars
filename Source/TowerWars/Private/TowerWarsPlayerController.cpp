@@ -40,8 +40,6 @@ void ATowerWarsPlayerController::SetSelectedActor(AActor * NewSelectedActor)
 	}
 }
 
-
-
 UCameraMovementComponent * ATowerWarsPlayerController::GetCameraMovementComponent()
 {
 	APawn* Pawn = GetPawn();

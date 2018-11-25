@@ -13,3 +13,8 @@ void ATowerWarsPlayerState::PayIncome()
 {
 	Gold += Income;
 }
+
+void ATowerWarsPlayerState::IncrementGold(int32 Increment)
+{
+	Gold += Increment;
+}

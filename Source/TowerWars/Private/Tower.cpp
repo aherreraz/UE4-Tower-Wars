@@ -20,15 +20,33 @@ ESelectedType ATower::GetType_Implementation() const
 	return ESelectedType::Tower;
 }
 
-void ATower::ReplaceTower(TSubclassOf<ATower> NewTowerClass)
+int32 ATower::IssueCommand_Implementation(ECommandType CommandType, int32 Value, int32 Gold)
 {
-	ATower* NewTower = nullptr;
-	return ReplaceTower(NewTowerClass, &NewTower);
+	if (CommandType == ECommandType::Upgrade)
+	{
+		// Invalid Command
+		if (Value >= Upgrades.Num())
+			return 0;
+
+		int32 UpgradeCost = Upgrades[Value]->GetDefaultObject<ATower>()->GoldCost;
+
+		// Not enough gold to pay upgrade
+		if (Gold < UpgradeCost)
+			return 0;
+
+		// Upgrade
+		ATower* NewTower = nullptr;
+		ReplaceTower(Upgrades[Value], &NewTower);
+		return UpgradeCost;
+	}
+
+	// TODO: Implement selling
+
+	return 0;
 }
 
 void ATower::ReplaceTower(TSubclassOf<ATower> NewTowerClass, ATower ** OutNewTower)
 {
-	// TODO: Check cost
 	ATower* const NewTower = GetWorld()->SpawnActorDeferred<ATower>(NewTowerClass, GetTransform(), nullptr, nullptr, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	if (NewTower)
 	{
