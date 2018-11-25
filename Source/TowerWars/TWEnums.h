@@ -9,3 +9,12 @@ enum class ESelectedType : uint8
 	Tower,
 	Minion
 };
+
+UENUM(BlueprintType)
+enum class EGamePhase : uint8
+{
+	Building,
+	Deployment,
+	Planning,
+	Fighting
+};
