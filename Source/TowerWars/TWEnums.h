@@ -22,6 +22,7 @@ enum class EGamePhase : uint8
 UENUM(BlueprintType)
 enum class ECommandType : uint8
 {
+	AnyButSell,
 	Upgrade,
 	Sell,
 	Deploy,

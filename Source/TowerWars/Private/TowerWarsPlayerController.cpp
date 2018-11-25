@@ -1,7 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TowerWarsPlayerController.h"
+#include "Engine/World.h"
+#include "TowerWarsGameState.h"
+#include "TowerWarsPlayerState.h"
 #include "SelectionInterface.h"
+#include "CommandInterface.h"
+
 
 void ATowerWarsPlayerController::BeginPlay()
 {
@@ -36,6 +41,25 @@ void ATowerWarsPlayerController::SetSelectedActor(AActor * NewSelectedActor)
 			if (NewSelectedActor && NewSelectedActor->GetClass()->ImplementsInterface(USelectionInterface::StaticClass()))
 				if (ISelectionInterface::Execute_OnSelectionGained(NewSelectedActor))
 					SelectedActor = NewSelectedActor;
+		}
+	}
+}
+
+void ATowerWarsPlayerController::IssueCommand(ECommandType CommandType, int32 Value)
+{
+	ATowerWarsGameState* const GameState = GetWorld()->GetGameState<ATowerWarsGameState>();
+	ATowerWarsPlayerState* const PlayerState = GetPlayerState<ATowerWarsPlayerState>();
+
+	if (GameState->GamePhase == EGamePhase::Building)
+	{
+		if (ISelectionInterface::Execute_GetType(SelectedActor.Get()) == ESelectedType::Tower)
+		{
+			int32 GoldCost;
+			if (CommandType == ECommandType::AnyButSell)
+				GoldCost = ICommandInterface::Execute_IssueCommand(SelectedActor.Get(), ECommandType::Upgrade, Value, PlayerState->Gold);
+			else if (CommandType == ECommandType::Sell)
+				GoldCost = ICommandInterface::Execute_IssueCommand(SelectedActor.Get(), ECommandType::Sell, Value, PlayerState->Gold);
+			PlayerState->IncrementGold(-GoldCost);
 		}
 	}
 }

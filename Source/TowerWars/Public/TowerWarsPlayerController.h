@@ -4,6 +4,7 @@
 
 #include "TowerWars.h"
 #include "GameFramework/PlayerController.h"
+#include "TWEnums.h"
 #include "Public/CameraMovementComponent.h"
 #include "TowerWarsPlayerController.generated.h"
 
@@ -30,7 +31,8 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = Selection)
 	void SetSelectedActor(AActor* NewSelectedActor);
 
-	
+	UFUNCTION(BlueprintCallable, Category = Command)
+	void IssueCommand(ECommandType CommandType, int32 Value);
 	
 private:
 	UCameraMovementComponent* GetCameraMovementComponent();
