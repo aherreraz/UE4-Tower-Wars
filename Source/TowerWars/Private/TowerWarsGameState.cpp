@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TowerWarsGameState.h"
+#include "Engine/World.h"
+#include "EngineUtils.h"
 #include "TowerWarsPlayerState.h"
 #include "TimerManager.h"
+#include "SpawnPoint.h"
 
 void ATowerWarsGameState::BeginPlay()
 {
@@ -14,14 +17,11 @@ void ATowerWarsGameState::BeginPlay()
 	
 	for (APlayerState* playerState : PlayerArray)
 		Cast<ATowerWarsPlayerState>(playerState)->Initialize(InitialGold, InitialIncome, InitialCastleHealth);
-
-	// Set timer for next phase
-	FTimerDelegate TimerDel;
-	
 }
 
 void ATowerWarsGameState::SetGamePhase(EGamePhase NewGamePhase)
 {
+	UE_LOG(LogTemp, Warning, TEXT("New Game Phase: %d"), int32(NewGamePhase));
 	GamePhase = NewGamePhase;
 	FTimerDelegate TimerDel;
 
@@ -42,7 +42,14 @@ void ATowerWarsGameState::SetGamePhase(EGamePhase NewGamePhase)
 	case EGamePhase::Fighting:
 		// TODO: remove this, just for testing
 		// TODO: Implement listener
-		GetWorldTimerManager().SetTimer(GamePhaseTimer, this, &ATowerWarsGameState::IncreaseWave, PlanningTime, false);
+		if (Waves.Num())
+		{
+			int32 Wave = WaveNumber % Waves.Num();
+			int32 MinionLevel = WaveNumber / Waves.Num();
+			TimerDel.BindUFunction(this, FName("SpawnMinions"), Wave, MinionLevel);
+			GetWorldTimerManager().SetTimer(SpawnTimer, TimerDel, SpawnDelay, true, SpawnDelay);
+			//GetWorldTimerManager().SetTimer(GamePhaseTimer, this, &ATowerWarsGameState::IncreaseWave, PlanningTime, false);
+		}
 		break;
 	}
 	// TODO: Notify players if needed
@@ -57,4 +64,26 @@ void ATowerWarsGameState::IncreaseWave()
 	// Pay income to players
 	for (APlayerState* playerState : PlayerArray)
 		Cast<ATowerWarsPlayerState>(playerState)->PayIncome();
+}
+
+void ATowerWarsGameState::SpawnMinions(int32 Wave, int32 MinionLevel)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Start Wave = %d Level = %d"), Wave, MinionLevel);
+	int32 SpawnedActors = 0;
+	for (TActorIterator<ASpawnPoint> SpawnIt(GetWorld()); SpawnIt; ++SpawnIt)
+	{
+		for (TPair< TSubclassOf<AMinion>, int32>& Minion : Waves[Wave].Minions)
+		{
+			if (Minion.Value > 0)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Time to spawn minion"));
+				GetWorld()->SpawnActor<AMinion>(Minion.Key, SpawnIt->GetSpawnLocation(), SpawnIt->GetActorRotation());
+				Minion.Value--;
+				SpawnedActors++;
+				break;
+			}
+		}
+	}
+	if (SpawnedActors == 0)
+		GetWorldTimerManager().ClearTimer(SpawnTimer);
 }

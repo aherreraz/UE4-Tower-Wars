@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
+#include "Minion.h"
 #include "TWEnums.h"
 #include "TowerWarsGameState.generated.h"
 
@@ -27,6 +28,7 @@ public:
 
 private:
 	FTimerHandle GamePhaseTimer;
+	FTimerHandle SpawnTimer;
 
 protected:
 	virtual void BeginPlay() override;
@@ -49,9 +51,18 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
 	int32 InitialCastleHealth = 50;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	TArray<FMinionGroup> Waves;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = GameConfiguration)
+	float SpawnDelay = 1.0f;
+
 	UFUNCTION(BlueprintCallable, Category = GamePhases)
 	void SetGamePhase(EGamePhase NewGamePhase);
 
 	UFUNCTION(BlueprintCallable, Category = GamePhases)
 	void IncreaseWave();
+
+	UFUNCTION(BlueprintCallable, Category = GamePhases)
+	void SpawnMinions(int32 Wave, int32 MinionLevel);
 };
