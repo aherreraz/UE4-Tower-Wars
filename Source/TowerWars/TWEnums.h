@@ -28,3 +28,11 @@ enum class ECommandType : uint8
 	Deploy,
 	ChangeAttack
 };
+
+UENUM(BlueprintType)
+enum class ESpawnPointLocation : uint8
+{
+	Top,
+	Left,
+	Right
+};

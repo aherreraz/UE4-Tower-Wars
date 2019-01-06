@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
 #include "Minion.h"
+#include "Tower.h"
+#include "SpawnPoint.h"
 #include "TWEnums.h"
 #include "TowerWarsGameMode.generated.h"
 
@@ -17,7 +19,6 @@ class TOWERWARS_API ATowerWarsGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	virtual void InitGameState() override;
 
 private:
 	FTimerHandle GamePhaseTimer;
@@ -25,6 +26,27 @@ private:
 	
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		TSubclassOf<ATower> EmptyBlockClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		TSubclassOf<ASpawnPoint> SpawnPointClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		TSubclassOf<AActor> CastleClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		FVector TileSize;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		int32 MapNTiles = 5;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		int32 MapMTiles = 5;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Map Generation")
+		TArray< FSpawnPointLocation > SpawnPoints;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Game Phases")
 		int32 BuildingTime = 30;
@@ -55,6 +77,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Game Configuration\|Misc")
 		int32 DevaluationPercent = 50;
+
+	UFUNCTION(BlueprintCallable, Category = MapConfiguration)
+		void CreateMap();
 
 	UFUNCTION(BlueprintCallable, Category = GamePhases)
 		void SetGamePhase(EGamePhase NewGamePhase);

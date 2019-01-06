@@ -1,26 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TowerWarsGameMode.h"
+#include <vector>
 #include "TimerManager.h"
 #include "EngineUtils.h"
 #include "TowerWarsGameState.h"
 #include "TowerWarsPlayerState.h"
-#include "SpawnPoint.h"
 
-void ATowerWarsGameMode::InitGameState()
-{
-	Super::InitGameState();
-	/*ATowerWarsGameState* const TowerWarsGameState = GetGameState<ATowerWarsGameState>();
-	if (TowerWarsGameState)
-	{
-		TowerWarsGameState->WaveNumber = 1;
-		TowerWarsGameState->DevaluationPercent = DevaluationPercent;
-		SetGamePhase(EGamePhase::Building);
-		
-		for (APlayerState* playerState : TowerWarsGameState->PlayerArray)
-			Cast<ATowerWarsPlayerState>(playerState)->Initialize(InitialGold, InitialIncome, InitialCastleHealth);
-	}*/
-}
 
 void ATowerWarsGameMode::BeginPlay()
 {
@@ -28,6 +14,7 @@ void ATowerWarsGameMode::BeginPlay()
 	ATowerWarsGameState* const TowerWarsGameState = GetGameState<ATowerWarsGameState>();
 	if (TowerWarsGameState)
 	{
+		CreateMap();
 		TowerWarsGameState->WaveNumber = 1;
 		TowerWarsGameState->DevaluationPercent = DevaluationPercent;
 		SetGamePhase(EGamePhase::Building);
@@ -35,6 +22,67 @@ void ATowerWarsGameMode::BeginPlay()
 		for (APlayerState* playerState : TowerWarsGameState->PlayerArray)
 			Cast<ATowerWarsPlayerState>(playerState)->Initialize(InitialGold, InitialIncome, InitialCastleHealth);
 	}
+}
+
+void ATowerWarsGameMode::CreateMap()
+{
+	ATowerWarsGameState* const TowerWarsGameState = GetGameState<ATowerWarsGameState>();
+
+	if (!EmptyBlockClass || !SpawnPointClass || !CastleClass)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Map couldn't be created, verify map cofiguration parameters are set"));
+	}
+	for (APlayerState* playerState : TowerWarsGameState->PlayerArray)
+	{
+		ATowerWarsPlayerState* twPlayerState = Cast<ATowerWarsPlayerState>(playerState);
+		twPlayerState->MapGrid = std::vector< std::vector<int32> >(MapNTiles + 2, std::vector<int32>(MapMTiles + 2, 1));
+		//UE_LOG(LogTemp, Warning, TEXT("Grid n = %d; m = %d"), twPlayerState->MapGrid.size(), twPlayerState->MapGrid[0].size());
+
+		//TODO: Implement for multiple players. Currently spawning relative to map origin
+
+		// Spawn Empty Blocks
+		for (int32 i = 1; i <= MapNTiles; i++)
+		{
+			for (int32 j = 1; j <= MapMTiles; j++)
+			{
+				twPlayerState->MapGrid[i][j] = 0;
+				GetWorld()->SpawnActor<ATower>(EmptyBlockClass, FVector(i, j, 0) * TileSize, FRotator::ZeroRotator);
+			}
+		}
+
+		// Spawn Spawn Points
+		for (FSpawnPointLocation spawnPoint : SpawnPoints)
+		{
+			switch (spawnPoint.Location)
+			{
+			case ESpawnPointLocation::Top:
+				if (spawnPoint.x < MapMTiles)
+				{
+					twPlayerState->MapGrid[MapNTiles + 1][spawnPoint.x + 1] = 0;
+					GetWorld()->SpawnActor<ASpawnPoint>(SpawnPointClass, FVector(MapNTiles + 1, spawnPoint.x + 1, 0) * TileSize, FRotator::ZeroRotator);
+				}
+				break;
+			case ESpawnPointLocation::Left:
+				if (spawnPoint.x < MapNTiles)
+				{
+					twPlayerState->MapGrid[spawnPoint.x + 1][0] = 0;
+					GetWorld()->SpawnActor<ASpawnPoint>(SpawnPointClass, FVector(spawnPoint.x + 1, 0, 0) * TileSize, FRotator::ZeroRotator);
+				}
+				break;
+			case ESpawnPointLocation::Right:
+				if (spawnPoint.x < MapNTiles)
+				{
+					twPlayerState->MapGrid[spawnPoint.x + 1][MapMTiles + 1] = 0;
+					GetWorld()->SpawnActor<ASpawnPoint>(SpawnPointClass, FVector(spawnPoint.x + 1, MapMTiles + 1, 0) * TileSize, FRotator::ZeroRotator);
+				}
+				break;
+			}
+		}
+
+		// Spawn Castle
+		GetWorld()->SpawnActor<AActor>(CastleClass, FVector(0, MapMTiles / 2.0f + 1, 0) * TileSize, FRotator::ZeroRotator);
+	}
+	
 }
 
 void ATowerWarsGameMode::SetGamePhase(EGamePhase NewGamePhase)

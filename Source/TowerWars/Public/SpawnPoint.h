@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TWEnums.h"
 #include "SpawnPoint.generated.h"
 
 UCLASS()
@@ -20,4 +21,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = Spawn)
 	FVector GetSpawnLocation() const;
+};
+
+USTRUCT(BlueprintType)
+struct FSpawnPointLocation
+{
+	GENERATED_USTRUCT_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SpawnPoint)
+		ESpawnPointLocation Location;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = SpawnPoint)
+		int32 x;
 };
