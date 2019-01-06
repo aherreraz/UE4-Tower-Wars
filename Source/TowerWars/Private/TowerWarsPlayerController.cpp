@@ -1,7 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "TowerWarsPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
+#include "TowerWarsGameMode.h"
 #include "TowerWarsGameState.h"
 #include "TowerWarsPlayerState.h"
 #include "SelectionInterface.h"
